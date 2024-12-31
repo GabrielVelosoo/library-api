@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: Library API
+  datasource:
+    url:
+    username:
+    password:
+    driver-class-name:
