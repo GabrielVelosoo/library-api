@@ -26,7 +26,8 @@ public class Author implements Serializable {
     @Column(name = "nationality", length = 50, nullable = false)
     private String nationality;
 
-    @OneToMany(mappedBy = "author")
+    //@OneToMany(mappedBy = "author")
+    @Transient
     private List<Book> books = new ArrayList<>();
 
     public UUID getId() {
