@@ -11,15 +11,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 @SpringBootTest
-public class AuthorRepositoryTest {
+class AuthorRepositoryTest {
 
     @Autowired
-    private AuthorRepository authorRepository;
+    AuthorRepository authorRepository;
 
     @Test
-    public void saveTest() {
+    void saveTest() {
         Author author = new Author();
-        author.setName("Maria");
+        author.setName("José");
         author.setNationality("Brazilian");
         author.setBirthDate(LocalDate.of(1951, 1, 31));
 
@@ -28,7 +28,7 @@ public class AuthorRepositoryTest {
     }
 
     @Test
-    public void updateTest() {
+    void updateTest() {
         var id = UUID.fromString("d07a709c-b4de-4302-aa56-8768f595933a");
         Optional<Author> author = authorRepository.findById(id);
 
@@ -43,24 +43,24 @@ public class AuthorRepositoryTest {
     }
 
     @Test
-    public void findAllTest() {
+    void findAllTest() {
         List<Author> authors = authorRepository.findAll();
         authors.forEach(System.out::println);
     }
 
     @Test
-    public void countTest() {
+    void countTest() {
         System.out.println("Authors count: " + authorRepository.count());
     }
 
     @Test
-    public void deleteByIdTest() {
+    void deleteByIdTest() {
         var id = UUID.fromString("19a0260a-2724-4a8e-a956-bf7dacbc39c4");
         authorRepository.deleteById(id);
     }
 
     @Test
-    public void deleteTest() {
+    void deleteTest() {
         var id = UUID.fromString("d07a709c-b4de-4302-aa56-8768f595933a");
         Optional<Author> author = authorRepository.findById(id);
 

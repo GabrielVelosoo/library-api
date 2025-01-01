@@ -33,7 +33,7 @@ public class Book implements Serializable {
     @Column(name = "price", precision = 18, scale = 2)
     private BigDecimal price;
 
-    @ManyToOne
+    @ManyToOne//(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_author")
     private Author author;
 
