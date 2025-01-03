@@ -26,8 +26,7 @@ public class Author implements Serializable {
     @Column(name = "nationality", length = 50, nullable = false)
     private String nationality;
 
-    //@OneToMany(mappedBy = "author")
-    @Transient
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Book> books = new ArrayList<>();
 
     public UUID getId() {
@@ -77,7 +76,6 @@ public class Author implements Serializable {
                 ", name='" + name + '\'' +
                 ", birthDate=" + birthDate +
                 ", nationality='" + nationality + '\'' +
-                ", books=" + books +
                 '}';
     }
 }

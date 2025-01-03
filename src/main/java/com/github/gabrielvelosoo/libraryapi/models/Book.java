@@ -33,7 +33,10 @@ public class Book implements Serializable {
     @Column(name = "price", precision = 18, scale = 2)
     private BigDecimal price;
 
-    @ManyToOne//(cascade = CascadeType.ALL)
+    @ManyToOne(
+            //cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
     @JoinColumn(name = "id_author")
     private Author author;
 
@@ -102,7 +105,6 @@ public class Book implements Serializable {
                 ", postDate=" + postDate +
                 ", genre=" + genre +
                 ", price=" + price +
-                ", author=" + author +
                 '}';
     }
 }

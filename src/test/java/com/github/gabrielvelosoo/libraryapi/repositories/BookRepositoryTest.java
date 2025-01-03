@@ -6,6 +6,7 @@ import com.github.gabrielvelosoo.libraryapi.models.enums.BookGenre;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -73,5 +74,50 @@ class BookRepositoryTest {
         book.setAuthor(author);
 
         bookRepository.save(book);
+    }
+
+    @Test
+    void updateTest() {
+        UUID id = UUID.fromString("e2e6d902-c9c0-4685-ac35-13ded1f9d53d");
+        Book book = bookRepository.findById(id).orElse(null);
+        if(book != null) {
+            book.setGenre(BookGenre.SCIENCE);
+            bookRepository.save(book);
+        }
+    }
+
+    @Test
+    void updateAuthorTest() {
+        UUID bookId = UUID.fromString("58fa9496-5052-4703-a043-e550a207336e");
+        Book book = bookRepository.findById(bookId).orElse(null);
+
+        UUID authorId = UUID.fromString("435ef251-8b2f-4260-9ffe-95d231c26199");
+        Author author = authorRepository.findById(authorId).orElse(null);
+
+        if(book != null && author != null) {
+            book.setAuthor(author);
+            bookRepository.save(book);
+        }
+    }
+
+    @Test
+    void deleteByIdTest() {
+        UUID id = UUID.fromString("afa7d65b-8ce3-4b94-9739-4fb0dae28779");
+        bookRepository.deleteById(id);
+    }
+
+    @Test
+    @Transactional
+    void findByIdTest() {
+        UUID id = UUID.fromString("e2e6d902-c9c0-4685-ac35-13ded1f9d53d");
+        Book book = bookRepository.findById(id).orElse(null);
+
+        if(book != null) {
+            System.out.println("Book: ");
+            System.out.println(book.getTitle());
+
+            System.out.println("Author: ");
+            System.out.println(book.getAuthor().getName());
+        }
     }
 }
