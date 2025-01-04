@@ -146,9 +146,18 @@ class BookRepositoryTest {
     @Test
     void searchBooksByTitleOrIsbnTest() {
         String title = "The haunted house robbery 2";
-        //String isbn = "91837-41864";
+        String isbn = null;
 
-        List<Book> books = bookRepository.findByTitleOrIsbn(title, null);
+        List<Book> books = bookRepository.findByTitleOrIsbn(title, isbn);
+        books.forEach(System.out::println);
+    }
+
+    @Test
+    void searchBooksByPostDateBetweenTest() {
+        LocalDate startDate = LocalDate.of(1980, 1, 1);
+        LocalDate finalDate = LocalDate.of(2000, 12, 31);
+
+        List<Book> books = bookRepository.findByPostDateBetween(startDate, finalDate);
         books.forEach(System.out::println);
     }
 }
