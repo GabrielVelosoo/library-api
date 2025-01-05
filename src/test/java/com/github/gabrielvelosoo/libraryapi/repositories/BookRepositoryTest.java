@@ -160,4 +160,16 @@ class BookRepositoryTest {
         List<Book> books = bookRepository.findByPostDateBetween(startDate, finalDate);
         books.forEach(System.out::println);
     }
+
+    @Test
+    void findAllOrderByTitleTest() {
+        List<Book> books = bookRepository.findAllOrderByTitle();
+        books.forEach(System.out::println);
+    }
+
+    @Test
+    void findBookAuthorTest() {
+        List<Author> authors = bookRepository.findBookAuthor();
+        authors.forEach(System.out::println);
+    }
 }
