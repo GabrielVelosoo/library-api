@@ -25,7 +25,7 @@ class BookRepositoryTest {
     @Test
     void saveTest() {
         Book book = new Book();
-        book.setIsbn("90887-84874");
+        book.setIsbn("43256-12454");
         book.setPrice(BigDecimal.valueOf(100));
         book.setGenre(BookGenre.FICTION);
         book.setTitle("UFO");
@@ -40,16 +40,16 @@ class BookRepositoryTest {
     @Test
     void saveAuthorAndBookTest() {
         Book book = new Book();
-        book.setIsbn("91837-41864");
-        book.setPrice(BigDecimal.valueOf(80));
+        book.setIsbn("43256-12454");
+        book.setPrice(BigDecimal.valueOf(320));
         book.setGenre(BookGenre.MYSTERY);
-        book.setTitle("Third book");
-        book.setPostDate(LocalDate.of(1994, 4, 8));
+        book.setTitle("Amazing adventure");
+        book.setPostDate(LocalDate.of(2004, 4, 10));
 
         Author author = new Author();
-        author.setName("José");
+        author.setName("Gabriel");
         author.setNationality("Brazilian");
-        author.setBirthDate(LocalDate.of(1951, 1, 31));
+        author.setBirthDate(LocalDate.of(2004, 4, 10));
 
         authorRepository.save(author);
 
@@ -171,5 +171,21 @@ class BookRepositoryTest {
     void findBookAuthorTest() {
         List<Author> authors = bookRepository.findBookAuthor();
         authors.forEach(System.out::println);
+    }
+
+    @Test
+    void findByGenreTest() {
+        List<Book> books = bookRepository.findByGenre(BookGenre.MYSTERY);
+        books.forEach(System.out::println);
+    }
+
+    @Test
+    void deleteByGenreTest() {
+        bookRepository.deleteByGenre(BookGenre.FANTASY);
+    }
+
+    @Test
+    void updatePostDateByGenre() {
+        bookRepository.updatePostDateByGenre(LocalDate.of(2020, 6, 13), BookGenre.MYSTERY);
     }
 }
