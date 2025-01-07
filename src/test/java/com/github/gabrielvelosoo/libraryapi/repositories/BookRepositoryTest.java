@@ -2,7 +2,7 @@ package com.github.gabrielvelosoo.libraryapi.repositories;
 
 import com.github.gabrielvelosoo.libraryapi.models.Author;
 import com.github.gabrielvelosoo.libraryapi.models.Book;
-import com.github.gabrielvelosoo.libraryapi.models.enums.BookGenre;
+import com.github.gabrielvelosoo.libraryapi.enums.BookGenre;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

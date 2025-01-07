@@ -1,4 +1,4 @@
-package com.github.gabrielvelosoo.libraryapi.models.enums;
+package com.github.gabrielvelosoo.libraryapi.enums;
 
 public enum BookGenre {
     FICTION,

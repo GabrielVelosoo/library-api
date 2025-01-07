@@ -1,6 +1,6 @@
 package com.github.gabrielvelosoo.libraryapi.models;
 
-import com.github.gabrielvelosoo.libraryapi.models.enums.BookGenre;
+import com.github.gabrielvelosoo.libraryapi.enums.BookGenre;
 import jakarta.persistence.*;
 
 import java.io.Serializable;

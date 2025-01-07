@@ -2,7 +2,7 @@ package com.github.gabrielvelosoo.libraryapi.repositories;
 
 import com.github.gabrielvelosoo.libraryapi.models.Author;
 import com.github.gabrielvelosoo.libraryapi.models.Book;
-import com.github.gabrielvelosoo.libraryapi.models.enums.BookGenre;
+import com.github.gabrielvelosoo.libraryapi.enums.BookGenre;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
