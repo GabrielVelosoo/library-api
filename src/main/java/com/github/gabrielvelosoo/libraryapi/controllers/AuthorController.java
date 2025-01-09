@@ -1,6 +1,8 @@
 package com.github.gabrielvelosoo.libraryapi.controllers;
 
 import com.github.gabrielvelosoo.libraryapi.dto.AuthorDTO;
+import com.github.gabrielvelosoo.libraryapi.dto.ResponseError;
+import com.github.gabrielvelosoo.libraryapi.exceptions.DuplicateRecordException;
 import com.github.gabrielvelosoo.libraryapi.models.Author;
 import com.github.gabrielvelosoo.libraryapi.services.AuthorService;
 import com.github.gabrielvelosoo.libraryapi.utils.UriUtil;
@@ -23,30 +25,40 @@ public class AuthorController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> saveAuthor(@RequestBody AuthorDTO authordto) {
-        Author author = authordto.mapToEntityAuthor();
-        authorService.saveAuthor(author);
-        URI location = UriUtil.buildLocationUri(author.getId());
+    public ResponseEntity<Object> saveAuthor(@RequestBody AuthorDTO authordto) {
+        try {
+            Author author = authordto.mapToEntityAuthor();
+            authorService.saveAuthor(author);
+            URI location = UriUtil.buildLocationUri(author.getId());
 
-        return ResponseEntity.created(location).build();
+            return ResponseEntity.created(location).build();
+        } catch(DuplicateRecordException e) {
+            ResponseError dtoError = ResponseError.conflictResponse(e.getMessage());
+            return ResponseEntity.status(dtoError.status()).body(dtoError);
+        }
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Void> updateAuthor(
+    public ResponseEntity<Object> updateAuthor(
             @PathVariable String id,
             @RequestBody AuthorDTO authordto) {
-        UUID authorId = UUID.fromString(id);
-        Optional<Author> optionalAuthor = authorService.findAuthorById(authorId);
+        try {
+            UUID authorId = UUID.fromString(id);
+            Optional<Author> optionalAuthor = authorService.findAuthorById(authorId);
 
-        if(optionalAuthor.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            if (optionalAuthor.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Author author = optionalAuthor.get();
+            authordto.mapToEntityAuthorUpdate(author);
+            authorService.updateAuthor(author);
+
+            return ResponseEntity.noContent().build();
+        } catch(DuplicateRecordException e) {
+            ResponseError dtoError = ResponseError.conflictResponse(e.getMessage());
+            return ResponseEntity.status(dtoError.status()).body(dtoError);
         }
-
-        Author author = optionalAuthor.get();
-        authordto.mapToEntityAuthorUpdate(author);
-        authorService.updateAuthor(author);
-
-        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(value = "/{id}")

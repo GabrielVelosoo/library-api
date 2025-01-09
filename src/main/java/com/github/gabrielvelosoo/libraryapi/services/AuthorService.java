@@ -2,6 +2,7 @@ package com.github.gabrielvelosoo.libraryapi.services;
 
 import com.github.gabrielvelosoo.libraryapi.models.Author;
 import com.github.gabrielvelosoo.libraryapi.repositories.AuthorRepository;
+import com.github.gabrielvelosoo.libraryapi.validators.AuthorValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,12 +13,15 @@ import java.util.UUID;
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
+    private final AuthorValidator authorValidator;
 
-    public AuthorService(AuthorRepository authorRepository) {
+    public AuthorService(AuthorRepository authorRepository, AuthorValidator authorValidator) {
         this.authorRepository = authorRepository;
+        this.authorValidator = authorValidator;
     }
 
     public void saveAuthor(Author author) {
+        authorValidator.validate(author);
         authorRepository.save(author);
     }
 
@@ -31,6 +35,7 @@ public class AuthorService {
 
     public void updateAuthor(Author author) {
         updateException(author);
+        authorValidator.validate(author);
         authorRepository.save(author);
     }
 
