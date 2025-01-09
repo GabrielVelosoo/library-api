@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,13 +23,54 @@ public class AuthorController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> saveAuthor(@RequestBody AuthorDTO author) {
-        Author entityAuthor = author.mapToEntityAuthor();
-        authorService.saveAuthor(entityAuthor);
-
-        URI location = UriUtil.buildLocationUri(entityAuthor.getId());
+    public ResponseEntity<Void> saveAuthor(@RequestBody AuthorDTO authordto) {
+        Author author = authordto.mapToEntityAuthor();
+        authorService.saveAuthor(author);
+        URI location = UriUtil.buildLocationUri(author.getId());
 
         return ResponseEntity.created(location).build();
+    }
+
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Void> updateAuthor(
+            @PathVariable String id,
+            @RequestBody AuthorDTO authordto) {
+        UUID authorId = UUID.fromString(id);
+        Optional<Author> optionalAuthor = authorService.findAuthorById(authorId);
+
+        if(optionalAuthor.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Author author = optionalAuthor.get();
+        authordto.mapToEntityAuthorUpdate(author);
+        authorService.updateAuthor(author);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> deleteAuthor(@PathVariable String id) {
+        UUID authorId = UUID.fromString(id);
+        Optional<Author> optionalAuthor = authorService.findAuthorById(authorId);
+
+        if(optionalAuthor.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        authorService.deleteAuthor(optionalAuthor.get());
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AuthorDTO>> searchAuthor(
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "nationality", required = false) String nationality) {
+        List<Author> result = authorService.searchAuthors(name, nationality);
+        List<AuthorDTO> authors = AuthorDTO.fromAuthors(result);
+
+        return ResponseEntity.ok(authors);
     }
 
     @GetMapping(value = "/{id}")
@@ -39,23 +81,9 @@ public class AuthorController {
         if(optionalAuthor.isPresent()) {
             Author author = optionalAuthor.get();
             AuthorDTO dtoAuthor = AuthorDTO.fromAuthor(author);
-
             return ResponseEntity.ok(dtoAuthor);
         }
 
         return ResponseEntity.notFound().build();
-    }
-
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteAuthorById(@PathVariable String id) {
-        UUID authorId = UUID.fromString(id);
-        Optional<Author> optionalAuthor = authorService.findAuthorById(authorId);
-
-        if(optionalAuthor.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        authorService.deleteAuthor(optionalAuthor.get());
-        return ResponseEntity.noContent().build();
     }
 }
