@@ -30,10 +30,6 @@ public class AuthorService {
         this.bookRepository = bookRepository;
     }
 
-    public Optional<Author> findAuthorById(UUID id) {
-        return authorRepository.findById(id);
-    }
-
     public void saveAuthor(Author author) {
         authorValidator.validate(author);
         authorRepository.save(author);
@@ -73,5 +69,9 @@ public class AuthorService {
         Example<Author> exampleAuthor = Example.of(author, matcher);
 
         return authorRepository.findAll(exampleAuthor);
+    }
+
+    public Optional<Author> findAuthorById(UUID id) {
+        return authorRepository.findById(id);
     }
 }

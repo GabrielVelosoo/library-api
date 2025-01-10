@@ -1,4 +1,4 @@
-package com.github.gabrielvelosoo.libraryapi.dto;
+package com.github.gabrielvelosoo.libraryapi.dto.errors;
 
 import org.springframework.http.HttpStatus;
 

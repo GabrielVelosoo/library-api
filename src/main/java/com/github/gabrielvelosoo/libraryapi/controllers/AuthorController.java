@@ -1,7 +1,7 @@
 package com.github.gabrielvelosoo.libraryapi.controllers;
 
 import com.github.gabrielvelosoo.libraryapi.dto.AuthorDTO;
-import com.github.gabrielvelosoo.libraryapi.dto.ResponseErrorDTO;
+import com.github.gabrielvelosoo.libraryapi.dto.errors.ResponseErrorDTO;
 import com.github.gabrielvelosoo.libraryapi.exceptions.DuplicateRecordException;
 import com.github.gabrielvelosoo.libraryapi.exceptions.OperationNotAllowedException;
 import com.github.gabrielvelosoo.libraryapi.models.Author;
@@ -27,9 +27,9 @@ public class AuthorController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> saveAuthor(@RequestBody @Valid AuthorDTO authordto) {
+    public ResponseEntity<Object> saveAuthor(@RequestBody @Valid AuthorDTO authorDTO) {
         try {
-            Author author = authordto.mapToEntityAuthor();
+            Author author = authorDTO.mapToEntityAuthor();
             authorService.saveAuthor(author);
             URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
@@ -39,14 +39,14 @@ public class AuthorController {
 
             return ResponseEntity.created(location).build();
         } catch(DuplicateRecordException e) {
-            ResponseErrorDTO dtoError = ResponseErrorDTO.conflictResponse(e.getMessage());
+            ResponseErrorDTO errorDTO = ResponseErrorDTO.conflictResponse(e.getMessage());
 
-            return ResponseEntity.status(dtoError.status()).body(dtoError);
+            return ResponseEntity.status(errorDTO.status()).body(errorDTO);
         }
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Object> updateAuthor(@PathVariable String id, @RequestBody @Valid AuthorDTO authordto) {
+    public ResponseEntity<Object> updateAuthor(@PathVariable String id, @RequestBody @Valid AuthorDTO authorDTO) {
         try {
             UUID authorId = UUID.fromString(id);
             Optional<Author> optionalAuthor = authorService.findAuthorById(authorId);
@@ -56,7 +56,7 @@ public class AuthorController {
             }
 
             Author author = optionalAuthor.get();
-            authordto.mapToEntityAuthorUpdate(author);
+            authorDTO.mapToEntityAuthorUpdate(author);
             authorService.updateAuthor(author);
 
             return ResponseEntity.noContent().build();

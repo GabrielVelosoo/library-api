@@ -2,14 +2,19 @@ package com.github.gabrielvelosoo.libraryapi.models;
 
 import com.github.gabrielvelosoo.libraryapi.enums.BookGenre;
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "tb_book", schema = "public")
+@EntityListeners(AuditingEntityListener.class)
 public class Book implements Serializable {
 
     @Id
@@ -17,7 +22,7 @@ public class Book implements Serializable {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "isbn", length = 20, nullable = false)
+    @Column(name = "isbn", length = 20, nullable = false, unique = true)
     private String isbn;
 
     @Column(name = "title", length = 150, nullable = false)
@@ -27,11 +32,22 @@ public class Book implements Serializable {
     private LocalDate postDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "genre", length = 30, nullable = false)
+    @Column(name = "genre", length = 30)
     private BookGenre genre;
 
     @Column(name = "price", precision = 18, scale = 2)
     private BigDecimal price;
+
+    @CreatedDate
+    @Column(name = "registration_date")
+    private LocalDateTime registrationDate;
+
+    @LastModifiedDate
+    @Column(name = "update_date")
+    private LocalDateTime updateDate;
+
+    @Column(name = "user_id")
+    private UUID userId;
 
     @ManyToOne(
             //cascade = CascadeType.ALL,

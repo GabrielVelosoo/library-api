@@ -13,16 +13,19 @@ import java.util.UUID;
 
 public record AuthorDTO(
         UUID id,
+
         @NotBlank(message = "required field")
         @Size(min = 2, max = 100, message = "field outside standard size")
         String name,
+
         @NotNull(message = "required field")
         @Past(message = "cannot be a future date")
         LocalDate birthDate,
+
         @NotBlank(message = "required field")
         @Size(min = 2, max = 50, message = "field outside standard size")
         String nationality
-) {
+    ) {
 
     public Author mapToEntityAuthor() {
         Author author = new Author();

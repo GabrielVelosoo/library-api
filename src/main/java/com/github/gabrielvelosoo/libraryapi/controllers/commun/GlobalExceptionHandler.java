@@ -1,7 +1,7 @@
 package com.github.gabrielvelosoo.libraryapi.controllers.commun;
 
-import com.github.gabrielvelosoo.libraryapi.dto.FieldErrorDTO;
-import com.github.gabrielvelosoo.libraryapi.dto.ResponseErrorDTO;
+import com.github.gabrielvelosoo.libraryapi.dto.errors.FieldErrorDTO;
+import com.github.gabrielvelosoo.libraryapi.dto.errors.ResponseErrorDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
