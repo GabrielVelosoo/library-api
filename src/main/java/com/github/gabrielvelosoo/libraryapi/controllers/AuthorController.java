@@ -6,10 +6,10 @@ import com.github.gabrielvelosoo.libraryapi.exceptions.DuplicateRecordException;
 import com.github.gabrielvelosoo.libraryapi.exceptions.OperationNotAllowedException;
 import com.github.gabrielvelosoo.libraryapi.models.Author;
 import com.github.gabrielvelosoo.libraryapi.services.AuthorService;
-import com.github.gabrielvelosoo.libraryapi.utils.UriUtil;
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -18,17 +18,24 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/authors")
-@RequiredArgsConstructor
 public class AuthorController {
 
     private final AuthorService authorService;
 
+    public AuthorController(AuthorService authorService) {
+        this.authorService = authorService;
+    }
+
     @PostMapping
-    public ResponseEntity<Object> saveAuthor(@RequestBody AuthorDTO authordto) {
+    public ResponseEntity<Object> saveAuthor(@RequestBody @Valid AuthorDTO authordto) {
         try {
             Author author = authordto.mapToEntityAuthor();
             authorService.saveAuthor(author);
-            URI location = UriUtil.buildLocationUri(author.getId());
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(author.getId())
+                    .toUri();
 
             return ResponseEntity.created(location).build();
         } catch(DuplicateRecordException e) {
@@ -39,7 +46,7 @@ public class AuthorController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Object> updateAuthor(@PathVariable String id, @RequestBody AuthorDTO authordto) {
+    public ResponseEntity<Object> updateAuthor(@PathVariable String id, @RequestBody @Valid AuthorDTO authordto) {
         try {
             UUID authorId = UUID.fromString(id);
             Optional<Author> optionalAuthor = authorService.findAuthorById(authorId);
@@ -83,7 +90,8 @@ public class AuthorController {
     @GetMapping
     public ResponseEntity<List<AuthorDTO>> searchAuthor(
             @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "nationality", required = false) String nationality) {
+            @RequestParam(value = "nationality", required = false) String nationality
+    ) {
         List<Author> result = authorService.searchAuthors(name, nationality);
         List<AuthorDTO> authors = AuthorDTO.fromAuthors(result);
 
