@@ -1,8 +1,11 @@
 package com.github.gabrielvelosoo.libraryapi.services;
 
+import com.github.gabrielvelosoo.libraryapi.exceptions.OperationNotAllowedException;
 import com.github.gabrielvelosoo.libraryapi.models.Author;
 import com.github.gabrielvelosoo.libraryapi.repositories.AuthorRepository;
+import com.github.gabrielvelosoo.libraryapi.repositories.BookRepository;
 import com.github.gabrielvelosoo.libraryapi.validators.AuthorValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,14 +13,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
     private final AuthorValidator authorValidator;
+    private final BookRepository bookRepository;
 
-    public AuthorService(AuthorRepository authorRepository, AuthorValidator authorValidator) {
-        this.authorRepository = authorRepository;
-        this.authorValidator = authorValidator;
+    public Optional<Author> findAuthorById(UUID id) {
+        return authorRepository.findById(id);
     }
 
     public void saveAuthor(Author author) {
@@ -25,24 +29,22 @@ public class AuthorService {
         authorRepository.save(author);
     }
 
-    public void deleteAuthor(Author author) {
-        authorRepository.delete(author);
-    }
-
-    public Optional<Author> findAuthorById(UUID id) {
-        return authorRepository.findById(id);
-    }
-
     public void updateAuthor(Author author) {
-        updateException(author);
         authorValidator.validate(author);
         authorRepository.save(author);
     }
 
-    public void updateException(Author author) {
-        if(author.getId() == null) {
-            throw new IllegalArgumentException("To update, the author must already be saved in the database!");
+    public void deleteAuthor(Author author) {
+        String exceptionMessage = "It is not possible to exclude an author who has registered books!";
+        if(hasBook(author)) {
+            throw new OperationNotAllowedException(exceptionMessage);
         }
+
+        authorRepository.delete(author);
+    }
+
+    public boolean hasBook(Author author) {
+        return bookRepository.existsByAuthor(author);
     }
 
     public List<Author> searchAuthors(String name, String nationality) {
