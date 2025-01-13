@@ -10,7 +10,6 @@ import com.github.gabrielvelosoo.libraryapi.services.AuthorService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -19,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/authors")
-public class AuthorController {
+public class AuthorController implements GenericController {
 
     private final AuthorService authorService;
     private final AuthorMapper authorMapper;
@@ -34,16 +33,10 @@ public class AuthorController {
         try {
             Author author = authorMapper.toEntity(authorDTO);
             authorService.saveAuthor(author);
-            URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(author.getId())
-                    .toUri();
-
-            return ResponseEntity.created(location).build();
+            URI url = generateHeaderLocation(author.getId());
+            return ResponseEntity.created(url).build();
         } catch(DuplicateRecordException e) {
             ResponseErrorDTO errorDTO = ResponseErrorDTO.conflictResponse(e.getMessage());
-
             return ResponseEntity.status(errorDTO.status()).body(errorDTO);
         }
     }
@@ -63,11 +56,9 @@ public class AuthorController {
             author.setBirthDate(authorDTO.birthDate());
             author.setNationality(authorDTO.nationality());
             authorService.updateAuthor(author);
-
             return ResponseEntity.noContent().build();
         } catch(DuplicateRecordException e) {
             ResponseErrorDTO errorDTO = ResponseErrorDTO.conflictResponse(e.getMessage());
-
             return ResponseEntity.status(errorDTO.status()).body(errorDTO);
         }
     }
@@ -83,11 +74,9 @@ public class AuthorController {
             }
 
             authorService.deleteAuthor(optionalAuthor.get());
-
             return ResponseEntity.noContent().build();
         } catch(OperationNotAllowedException e) {
             ResponseErrorDTO errorDTO = ResponseErrorDTO.defaultResponse(e.getMessage());
-
             return ResponseEntity.status(errorDTO.status()).body(errorDTO);
         }
     }
@@ -99,14 +88,12 @@ public class AuthorController {
     ) {
         List<Author> result = authorService.searchAuthors(name, nationality);
         List<AuthorDTO> authors = authorMapper.toDtos(result);
-
         return ResponseEntity.ok(authors);
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<AuthorDTO> findAuthorById(@PathVariable String id) {
         UUID authorId = UUID.fromString(id);
-
         return authorService
                 .findAuthorById(authorId)
                 .map(author -> {

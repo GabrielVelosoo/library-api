@@ -1,4 +1,4 @@
-package com.github.gabrielvelosoo.libraryapi.controllers.commun;
+package com.github.gabrielvelosoo.libraryapi.controllers.common;
 
 import com.github.gabrielvelosoo.libraryapi.dto.errors.FieldErrorDTO;
 import com.github.gabrielvelosoo.libraryapi.dto.errors.ResponseErrorDTO;
@@ -22,7 +22,6 @@ public class GlobalExceptionHandler {
                 .stream()
                 .map(fieldError -> new FieldErrorDTO(fieldError.getField(), fieldError.getDefaultMessage()))
                 .toList();
-
         return new ResponseErrorDTO(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Validation error.", errorList);
     }
 }

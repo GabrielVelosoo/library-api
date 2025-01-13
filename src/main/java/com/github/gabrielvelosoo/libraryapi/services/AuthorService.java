@@ -67,7 +67,6 @@ public class AuthorService {
                 .withIgnoreCase()
                 .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
         Example<Author> exampleAuthor = Example.of(author, matcher);
-
         return authorRepository.findAll(exampleAuthor);
     }
 

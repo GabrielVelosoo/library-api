@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public record RegisterBookDTO(
-        @ISBN
+        @ISBN(message = "invalid ISNB")
         @NotBlank(message = "required field")
         String isbn,
 
