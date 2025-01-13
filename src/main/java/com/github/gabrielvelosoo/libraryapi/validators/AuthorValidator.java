@@ -29,6 +29,6 @@ public class AuthorValidator {
             return optionalAuthor.isPresent();
         }
 
-        return !author.getId().equals(optionalAuthor.get().getId());
+        return optionalAuthor.isPresent() && !author.getId().equals(optionalAuthor.get().getId());
     }
 }

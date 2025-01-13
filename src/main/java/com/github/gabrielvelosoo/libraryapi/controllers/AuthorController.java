@@ -4,6 +4,7 @@ import com.github.gabrielvelosoo.libraryapi.dto.AuthorDTO;
 import com.github.gabrielvelosoo.libraryapi.dto.errors.ResponseErrorDTO;
 import com.github.gabrielvelosoo.libraryapi.exceptions.DuplicateRecordException;
 import com.github.gabrielvelosoo.libraryapi.exceptions.OperationNotAllowedException;
+import com.github.gabrielvelosoo.libraryapi.mappers.AuthorMapper;
 import com.github.gabrielvelosoo.libraryapi.models.Author;
 import com.github.gabrielvelosoo.libraryapi.services.AuthorService;
 import jakarta.validation.Valid;
@@ -21,15 +22,17 @@ import java.util.UUID;
 public class AuthorController {
 
     private final AuthorService authorService;
+    private final AuthorMapper authorMapper;
 
-    public AuthorController(AuthorService authorService) {
+    public AuthorController(AuthorService authorService, AuthorMapper authorMapper) {
         this.authorService = authorService;
+        this.authorMapper = authorMapper;
     }
 
     @PostMapping
     public ResponseEntity<Object> saveAuthor(@RequestBody @Valid AuthorDTO authorDTO) {
         try {
-            Author author = authorDTO.mapToEntityAuthor();
+            Author author = authorMapper.toEntity(authorDTO);
             authorService.saveAuthor(author);
             URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
@@ -56,14 +59,16 @@ public class AuthorController {
             }
 
             Author author = optionalAuthor.get();
-            authorDTO.mapToEntityAuthorUpdate(author);
+            author.setName(authorDTO.name());
+            author.setBirthDate(authorDTO.birthDate());
+            author.setNationality(authorDTO.nationality());
             authorService.updateAuthor(author);
 
             return ResponseEntity.noContent().build();
         } catch(DuplicateRecordException e) {
-            ResponseErrorDTO dtoError = ResponseErrorDTO.conflictResponse(e.getMessage());
+            ResponseErrorDTO errorDTO = ResponseErrorDTO.conflictResponse(e.getMessage());
 
-            return ResponseEntity.status(dtoError.status()).body(dtoError);
+            return ResponseEntity.status(errorDTO.status()).body(errorDTO);
         }
     }
 
@@ -81,9 +86,9 @@ public class AuthorController {
 
             return ResponseEntity.noContent().build();
         } catch(OperationNotAllowedException e) {
-            ResponseErrorDTO dtoError = ResponseErrorDTO.defaultResponse(e.getMessage());
+            ResponseErrorDTO errorDTO = ResponseErrorDTO.defaultResponse(e.getMessage());
 
-            return ResponseEntity.status(dtoError.status()).body(dtoError);
+            return ResponseEntity.status(errorDTO.status()).body(errorDTO);
         }
     }
 
@@ -93,7 +98,7 @@ public class AuthorController {
             @RequestParam(value = "nationality", required = false) String nationality
     ) {
         List<Author> result = authorService.searchAuthors(name, nationality);
-        List<AuthorDTO> authors = AuthorDTO.fromAuthors(result);
+        List<AuthorDTO> authors = authorMapper.toDtos(result);
 
         return ResponseEntity.ok(authors);
     }
@@ -101,14 +106,12 @@ public class AuthorController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<AuthorDTO> findAuthorById(@PathVariable String id) {
         UUID authorId = UUID.fromString(id);
-        Optional<Author> optionalAuthor = authorService.findAuthorById(authorId);
 
-        if(optionalAuthor.isPresent()) {
-            Author author = optionalAuthor.get();
-            AuthorDTO dtoAuthor = AuthorDTO.fromAuthor(author);
-            return ResponseEntity.ok(dtoAuthor);
-        }
-
-        return ResponseEntity.notFound().build();
+        return authorService
+                .findAuthorById(authorId)
+                .map(author -> {
+                    AuthorDTO authorDTO = authorMapper.toDto(author);
+                    return ResponseEntity.ok(authorDTO);
+                }).orElseGet( () -> ResponseEntity.notFound().build() );
     }
 }
