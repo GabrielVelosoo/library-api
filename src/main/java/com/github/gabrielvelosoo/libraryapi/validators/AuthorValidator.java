@@ -24,11 +24,9 @@ public class AuthorValidator {
 
     private boolean isExistsAuthor(Author author) {
         Optional<Author> optionalAuthor = authorRepository.findByNameAndBirthDateAndNationality(author.getName(), author.getBirthDate(), author.getNationality());
-
         if(author.getId() == null) {
             return optionalAuthor.isPresent();
         }
-
         return optionalAuthor.isPresent() && !author.getId().equals(optionalAuthor.get().getId());
     }
 }

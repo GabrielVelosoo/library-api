@@ -15,9 +15,7 @@ public class Application {
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(Application.class);
 		builder.bannerMode(Banner.Mode.OFF);
 		builder.profiles("hml");
-
 		builder.run(args);
-
 		ConfigurableApplicationContext applicationContext = builder.context();
 		ConfigurableEnvironment environment = applicationContext.getEnvironment();
 		String applicationName = environment.getProperty("spring.application.name");

@@ -10,6 +10,6 @@ import java.util.List;
 public interface AuthorMapper {
 
     Author toEntity(AuthorDTO authorDTO);
-    AuthorDTO toDto(Author author);
-    List<AuthorDTO> toDtos(List<Author> authors);
+    AuthorDTO toDTO(Author author);
+    List<AuthorDTO> toDTOs(List<Author> authors);
 }

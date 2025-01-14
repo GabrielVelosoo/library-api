@@ -49,10 +49,7 @@ public class Book implements Serializable {
     @Column(name = "user_id")
     private UUID userId;
 
-    @ManyToOne(
-            //cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_author")
     private Author author;
 

@@ -45,7 +45,6 @@ public class AuthorService {
         if(hasBook(author)) {
             throw new OperationNotAllowedException(exceptionMessage);
         }
-
         authorRepository.delete(author);
     }
 

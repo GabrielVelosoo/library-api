@@ -14,4 +14,8 @@ public interface GenericController {
                 .buildAndExpand(id)
                 .toUri();
     }
+
+    default UUID fromString(String id) {
+        return UUID.fromString(id);
+    }
 }
