@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/authors")
@@ -33,17 +32,16 @@ public class AuthorController implements GenericController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Void> updateAuthor(@PathVariable String id, @RequestBody @Valid AuthorDTO authorDTO) {
-        Optional<Author> optionalAuthor = authorService.findAuthorById(fromString(id));
-        if (optionalAuthor.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Author author = optionalAuthor.get();
-        author.setName(authorDTO.name());
-        author.setBirthDate(authorDTO.birthDate());
-        author.setNationality(authorDTO.nationality());
-        authorService.updateAuthor(author);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Object> updateAuthor(@PathVariable String id, @RequestBody @Valid AuthorDTO authorDTO) {
+        return authorService.findAuthorById(fromString(id))
+                .map(author -> {
+                    Author authorEntity = authorMapper.toEntity(authorDTO);
+                    author.setName(authorEntity.getName());
+                    author.setBirthDate(authorEntity.getBirthDate());
+                    author.setNationality(authorEntity.getNationality());
+                    authorService.updateAuthor(author);
+                    return ResponseEntity.noContent().build();
+                }).orElseGet( () -> ResponseEntity.notFound().build() );
     }
 
     @DeleteMapping(value = "/{id}")

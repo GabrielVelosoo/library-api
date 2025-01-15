@@ -5,13 +5,15 @@ import com.github.gabrielvelosoo.libraryapi.models.Author;
 import com.github.gabrielvelosoo.libraryapi.repositories.AuthorRepository;
 import com.github.gabrielvelosoo.libraryapi.repositories.BookRepository;
 import com.github.gabrielvelosoo.libraryapi.validators.AuthorValidator;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.github.gabrielvelosoo.libraryapi.repositories.specs.AuthorSpecs.nameLike;
+import static com.github.gabrielvelosoo.libraryapi.repositories.specs.AuthorSpecs.nationalityLike;
 
 @Service
 public class AuthorService {
@@ -57,16 +59,14 @@ public class AuthorService {
     }
 
     public List<Author> searchByExample(String name, String nationality) {
-        Author author = new Author();
-        author.setName(name);
-        author.setNationality(nationality);
-        ExampleMatcher matcher = ExampleMatcher
-                .matching()
-                .withIgnoreNullValues()
-                .withIgnoreCase()
-                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
-        Example<Author> exampleAuthor = Example.of(author, matcher);
-        return authorRepository.findAll(exampleAuthor);
+        Specification<Author> specs = Specification.where( (root, query, cb) -> cb.conjunction() );
+        if(name != null) {
+            specs = specs.and(nameLike(name));
+        }
+        if(nationality != null) {
+            specs = specs.and(nationalityLike(nationality));
+        }
+        return authorRepository.findAll(specs);
     }
 
     public Optional<Author> findAuthorById(UUID id) {
