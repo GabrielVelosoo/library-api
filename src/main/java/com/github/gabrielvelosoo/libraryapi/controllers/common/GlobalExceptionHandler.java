@@ -3,6 +3,7 @@ package com.github.gabrielvelosoo.libraryapi.controllers.common;
 import com.github.gabrielvelosoo.libraryapi.dto.errors.FieldErrorDTO;
 import com.github.gabrielvelosoo.libraryapi.dto.errors.ResponseErrorDTO;
 import com.github.gabrielvelosoo.libraryapi.exceptions.DuplicateRecordException;
+import com.github.gabrielvelosoo.libraryapi.exceptions.InvalidFieldException;
 import com.github.gabrielvelosoo.libraryapi.exceptions.OperationNotAllowedException;
 import com.github.gabrielvelosoo.libraryapi.mappers.FieldErrorMapper;
 import org.springframework.http.HttpStatus;
@@ -43,9 +44,18 @@ public class GlobalExceptionHandler {
         return ResponseErrorDTO.defaultResponse(e.getMessage());
     }
 
+    @ExceptionHandler(InvalidFieldException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ResponseErrorDTO handleInvalidFieldException(InvalidFieldException e) {
+        return new ResponseErrorDTO(
+                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                "Validation error.",
+                List.of(new FieldErrorDTO(e.getField(), e.getMessage())));
+    }
+
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseErrorDTO handleUnhandledErrorsException(RuntimeException e) {
-        return new ResponseErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An unexpected error has occurred. Please contact management.", List.of());
+        return new ResponseErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), List.of());
     }
 }

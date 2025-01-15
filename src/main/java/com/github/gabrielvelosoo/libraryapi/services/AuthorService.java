@@ -33,12 +33,12 @@ public class AuthorService {
     }
 
     public void saveAuthor(Author author) {
-        authorValidator.validate(author);
+        authorValidator.authorValidate(author);
         authorRepository.save(author);
     }
 
     public void updateAuthor(Author author) {
-        authorValidator.validate(author);
+        authorValidator.authorValidate(author);
         authorRepository.save(author);
     }
 

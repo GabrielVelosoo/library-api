@@ -7,11 +7,11 @@ import com.github.gabrielvelosoo.libraryapi.mappers.BookMapper;
 import com.github.gabrielvelosoo.libraryapi.models.Book;
 import com.github.gabrielvelosoo.libraryapi.services.BookService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/books")
@@ -60,16 +60,18 @@ public class BookController implements GenericController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ResultSearchBookDTO>> searchBooks(
+    public ResponseEntity<Page<ResultSearchBookDTO>> searchBooks(
             @RequestParam(value = "isbn", required = false) String isbn,
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "author-name", required = false) String authorName,
             @RequestParam(value = "genre", required = false) BookGenre genre,
-            @RequestParam(value = "post-year", required = false) Integer postYear
+            @RequestParam(value = "post-year", required = false) Integer postYear,
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "page-size", defaultValue = "10") Integer pageSize
     ) {
-        List<Book> result = bookService.searchBooks(isbn, title, authorName, genre, postYear);
-        List<ResultSearchBookDTO> books = bookMapper.toDTOs(result);
-        return ResponseEntity.ok(books);
+        Page<Book> pageResult = bookService.searchBooks(isbn, title, authorName, genre, postYear, page, pageSize);
+        Page<ResultSearchBookDTO> result = pageResult.map(bookMapper::toDTO);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping(value = "/{id}")

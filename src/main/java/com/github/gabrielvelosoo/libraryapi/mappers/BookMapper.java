@@ -8,8 +8,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring", uses = AuthorMapper.class)
 public abstract class BookMapper {
 
@@ -19,5 +17,4 @@ public abstract class BookMapper {
     @Mapping(target = "author", expression = "java( authorRepository.findById(bookDTO.authorId()).orElse(null) )")
     public abstract Book toEntity(RegisterBookDTO bookDTO);
     public abstract ResultSearchBookDTO toDTO(Book book);
-    public abstract List<ResultSearchBookDTO> toDTOs(List<Book> books);
 }

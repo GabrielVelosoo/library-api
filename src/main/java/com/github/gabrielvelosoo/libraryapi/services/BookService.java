@@ -3,10 +3,13 @@ package com.github.gabrielvelosoo.libraryapi.services;
 import com.github.gabrielvelosoo.libraryapi.enums.BookGenre;
 import com.github.gabrielvelosoo.libraryapi.models.Book;
 import com.github.gabrielvelosoo.libraryapi.repositories.BookRepository;
+import com.github.gabrielvelosoo.libraryapi.validators.BookValidator;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,19 +19,20 @@ import static com.github.gabrielvelosoo.libraryapi.repositories.specs.BookSpecs.
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final BookValidator bookValidator;
 
-    public BookService(BookRepository bookRepository) {
+    public BookService(BookRepository bookRepository, BookValidator bookValidator) {
         this.bookRepository = bookRepository;
+        this.bookValidator = bookValidator;
     }
 
     public void saveBook(Book book) {
+        bookValidator.bookValidate(book);
         bookRepository.save(book);
     }
 
     public void updateBook(Book book) {
-        if(book.getId() == null) {
-            throw new IllegalArgumentException("Book id is null");
-        }
+        bookValidator.bookValidate(book);
         bookRepository.save(book);
     }
 
@@ -36,13 +40,15 @@ public class BookService {
         bookRepository.delete(book);
     }
 
-    public List<Book> searchBooks(
-            String isbn, String title, String authorName, BookGenre genre, Integer postYear
+    public Page<Book> searchBooks(
+            String isbn, String title, String authorName, BookGenre genre, Integer postYear, Integer page, Integer pageSize
     ) {
-        return searchByExample(isbn, title, authorName, genre, postYear);
+        Specification<Book> specifications = searchBookSpecifications(isbn, title, authorName, genre, postYear);
+        Pageable pagination = bookPagination(page, pageSize);
+        return bookRepository.findAll(specifications, pagination);
     }
 
-    public List<Book> searchByExample(
+    public Specification<Book> searchBookSpecifications(
             String isbn, String title, String authorName, BookGenre genre, Integer postYear
     ) {
         Specification<Book> specs = Specification.where( (root, query, cb) -> cb.conjunction() );
@@ -61,7 +67,11 @@ public class BookService {
         if(postYear != null) {
             specs = specs.and(postYearEqual(postYear));
         }
-        return bookRepository.findAll(specs);
+        return specs;
+    }
+
+    public Pageable bookPagination(Integer page, Integer pageSize) {
+        return PageRequest.of(page, pageSize);
     }
 
     public Optional<Book> findBookById(UUID id) {

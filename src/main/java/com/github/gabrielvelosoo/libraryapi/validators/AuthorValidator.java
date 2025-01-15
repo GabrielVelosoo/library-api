@@ -16,17 +16,20 @@ public class AuthorValidator {
         this.authorRepository = authorRepository;
     }
 
-    public void validate(Author author) {
+    public void authorValidate(Author author) {
         if(isExistsAuthor(author)) {
             throw new DuplicateRecordException("Author already exists");
         }
     }
 
     private boolean isExistsAuthor(Author author) {
-        Optional<Author> optionalAuthor = authorRepository.findByNameAndBirthDateAndNationality(author.getName(), author.getBirthDate(), author.getNationality());
+        Optional<Author> foundAuthor = authorRepository.findByNameAndBirthDateAndNationality(author.getName(), author.getBirthDate(), author.getNationality());
         if(author.getId() == null) {
-            return optionalAuthor.isPresent();
+            return foundAuthor.isPresent();
         }
-        return optionalAuthor.isPresent() && !author.getId().equals(optionalAuthor.get().getId());
+        return foundAuthor
+                .map(Author::getId)
+                .stream()
+                .anyMatch(id -> !id.equals(author.getId()));
     }
 }
