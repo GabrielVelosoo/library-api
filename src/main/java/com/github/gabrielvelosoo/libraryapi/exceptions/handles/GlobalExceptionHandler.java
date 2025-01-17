@@ -1,4 +1,4 @@
-package com.github.gabrielvelosoo.libraryapi.controllers.common;
+package com.github.gabrielvelosoo.libraryapi.exceptions.handles;
 
 import com.github.gabrielvelosoo.libraryapi.dto.errors.FieldErrorDTO;
 import com.github.gabrielvelosoo.libraryapi.dto.errors.ResponseErrorDTO;
