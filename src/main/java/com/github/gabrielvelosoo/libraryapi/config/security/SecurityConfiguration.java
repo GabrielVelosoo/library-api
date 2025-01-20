@@ -24,7 +24,12 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(configurer -> configurer.loginPage("/login").permitAll())
-                .authorizeHttpRequests( authorize -> authorize.anyRequest().authenticated() )
+                .authorizeHttpRequests( authorize -> {
+                    authorize.requestMatchers("/login/**").permitAll();
+                    authorize.requestMatchers("/authors/**").hasRole("ADMIN");
+                    authorize.requestMatchers("/books/**").hasAnyRole("USER", "ADMIN");
+                    authorize.anyRequest().authenticated();
+                } )
                 .build();
     }
 
@@ -43,7 +48,7 @@ public class SecurityConfiguration {
         UserDetails user2 = User.builder()
                 .username("adm")
                 .password(encoder.encode("321"))
-                .roles("ADM")
+                .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(user1, user2);
     }
