@@ -7,6 +7,7 @@ import com.github.gabrielvelosoo.libraryapi.services.AuthorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -21,6 +22,7 @@ public class AuthorController implements GenericController {
     private final AuthorMapper authorMapper;
 
     @PostMapping
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<Void> saveAuthor(@RequestBody @Valid AuthorDTO authorDTO) {
         Author author = authorMapper.toEntity(authorDTO);
         authorService.saveAuthor(author);
@@ -29,7 +31,9 @@ public class AuthorController implements GenericController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Object> updateAuthor(@PathVariable String id, @RequestBody @Valid AuthorDTO authorDTO) {
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<Object> updateAuthor(@PathVariable String id,
+                                               @RequestBody @Valid AuthorDTO authorDTO) {
         return authorService.findAuthorById(fromString(id))
                 .map(author -> {
                     Author authorEntity = authorMapper.toEntity(authorDTO);
@@ -42,6 +46,7 @@ public class AuthorController implements GenericController {
     }
 
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<Object> deleteAuthor(@PathVariable String id) {
         return authorService.findAuthorById(fromString(id))
                 .map(author -> {
@@ -51,6 +56,7 @@ public class AuthorController implements GenericController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     public ResponseEntity<List<AuthorDTO>> searchAuthors(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "nationality", required = false) String nationality
@@ -61,6 +67,7 @@ public class AuthorController implements GenericController {
     }
 
     @GetMapping(value = "/{id}")
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     public ResponseEntity<AuthorDTO> findAuthorById(@PathVariable String id) {
         return authorService
                 .findAuthorById(fromString(id))

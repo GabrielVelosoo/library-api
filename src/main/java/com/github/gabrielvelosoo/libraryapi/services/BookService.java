@@ -2,7 +2,9 @@ package com.github.gabrielvelosoo.libraryapi.services;
 
 import com.github.gabrielvelosoo.libraryapi.enums.BookGenre;
 import com.github.gabrielvelosoo.libraryapi.models.Book;
+import com.github.gabrielvelosoo.libraryapi.models.User;
 import com.github.gabrielvelosoo.libraryapi.repositories.BookRepository;
+import com.github.gabrielvelosoo.libraryapi.security.SecurityService;
 import com.github.gabrielvelosoo.libraryapi.validators.BookValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,9 +24,12 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final BookValidator bookValidator;
+    private final SecurityService securityService;
 
     public void saveBook(Book book) {
         bookValidator.bookValidate(book);
+        User user = securityService.getLoggedUser();
+        book.setUser(user);
         bookRepository.save(book);
     }
 

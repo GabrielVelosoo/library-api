@@ -15,6 +15,14 @@ public interface GenericController {
                 .toUri();
     }
 
+    default URI generateHeaderLocationUser(String login) {
+        return ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{login}")
+                .buildAndExpand(login)
+                .toUri();
+    }
+
     default UUID fromString(String id) {
         return UUID.fromString(id);
     }

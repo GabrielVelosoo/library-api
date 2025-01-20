@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -23,6 +24,7 @@ public class BookController implements GenericController {
     private final BookMapper bookMapper;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     public ResponseEntity<Void> saveBook(@RequestBody @Valid RegisterBookDTO bookDTO) {
         Book book = bookMapper.toEntity(bookDTO);
         bookService.saveBook(book);
@@ -31,7 +33,9 @@ public class BookController implements GenericController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Object> updateBook(@PathVariable String id, @RequestBody @Valid RegisterBookDTO bookDTO) {
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
+    public ResponseEntity<Object> updateBook(@PathVariable String id,
+                                             @RequestBody @Valid RegisterBookDTO bookDTO) {
         return bookService
                 .findBookById(fromString(id))
                 .map(book -> {
@@ -48,6 +52,7 @@ public class BookController implements GenericController {
     }
 
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     public ResponseEntity<Object> deleteBook(@PathVariable String id) {
         return bookService.findBookById(fromString(id))
                 .map(book -> {
@@ -57,6 +62,7 @@ public class BookController implements GenericController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     public ResponseEntity<Page<ResultSearchBookDTO>> searchBooks(
             @RequestParam(value = "isbn", required = false) String isbn,
             @RequestParam(value = "title", required = false) String title,
@@ -72,6 +78,7 @@ public class BookController implements GenericController {
     }
 
     @GetMapping(value = "/{id}")
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     public ResponseEntity<ResultSearchBookDTO> findBookById(@PathVariable String id) {
         return bookService
                 .findBookById(fromString(id))
