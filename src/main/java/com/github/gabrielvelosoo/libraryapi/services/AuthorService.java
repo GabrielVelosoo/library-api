@@ -5,6 +5,7 @@ import com.github.gabrielvelosoo.libraryapi.models.Author;
 import com.github.gabrielvelosoo.libraryapi.repositories.AuthorRepository;
 import com.github.gabrielvelosoo.libraryapi.repositories.BookRepository;
 import com.github.gabrielvelosoo.libraryapi.validators.AuthorValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -16,21 +17,12 @@ import static com.github.gabrielvelosoo.libraryapi.repositories.specs.AuthorSpec
 import static com.github.gabrielvelosoo.libraryapi.repositories.specs.AuthorSpecs.nationalityLike;
 
 @Service
+@RequiredArgsConstructor
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
     private final AuthorValidator authorValidator;
     private final BookRepository bookRepository;
-
-    public AuthorService(
-            AuthorRepository authorRepository,
-            AuthorValidator authorValidator,
-            BookRepository bookRepository
-    ) {
-        this.authorRepository = authorRepository;
-        this.authorValidator = authorValidator;
-        this.bookRepository = bookRepository;
-    }
 
     public void saveAuthor(Author author) {
         authorValidator.authorValidate(author);

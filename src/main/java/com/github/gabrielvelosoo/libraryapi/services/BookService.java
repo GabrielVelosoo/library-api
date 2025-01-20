@@ -4,6 +4,7 @@ import com.github.gabrielvelosoo.libraryapi.enums.BookGenre;
 import com.github.gabrielvelosoo.libraryapi.models.Book;
 import com.github.gabrielvelosoo.libraryapi.repositories.BookRepository;
 import com.github.gabrielvelosoo.libraryapi.validators.BookValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,15 +17,11 @@ import java.util.UUID;
 import static com.github.gabrielvelosoo.libraryapi.repositories.specs.BookSpecs.*;
 
 @Service
+@RequiredArgsConstructor
 public class BookService {
 
     private final BookRepository bookRepository;
     private final BookValidator bookValidator;
-
-    public BookService(BookRepository bookRepository, BookValidator bookValidator) {
-        this.bookRepository = bookRepository;
-        this.bookValidator = bookValidator;
-    }
 
     public void saveBook(Book book) {
         bookValidator.bookValidate(book);

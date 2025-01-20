@@ -4,14 +4,14 @@ import com.github.gabrielvelosoo.libraryapi.dto.RegisterBookDTO;
 import com.github.gabrielvelosoo.libraryapi.dto.ResultSearchBookDTO;
 import com.github.gabrielvelosoo.libraryapi.models.Book;
 import com.github.gabrielvelosoo.libraryapi.repositories.AuthorRepository;
+import lombok.RequiredArgsConstructor;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(componentModel = "spring", uses = AuthorMapper.class)
+@RequiredArgsConstructor
 public abstract class BookMapper {
 
-    @Autowired
     AuthorRepository authorRepository;
 
     @Mapping(target = "author", expression = "java( authorRepository.findById(bookDTO.authorId()).orElse(null) )")

@@ -4,20 +4,18 @@ import com.github.gabrielvelosoo.libraryapi.exceptions.DuplicateRecordException;
 import com.github.gabrielvelosoo.libraryapi.exceptions.InvalidFieldException;
 import com.github.gabrielvelosoo.libraryapi.models.Book;
 import com.github.gabrielvelosoo.libraryapi.repositories.BookRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class BookValidator {
 
     private static final int YEAR_PRICE_REQUIREMENT = 2020;
 
     private final BookRepository bookRepository;
-
-    public BookValidator(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
-    }
 
     public void bookValidate(Book book) {
         if(isIsbnAlreadyRegistered(book)) {

@@ -1,5 +1,8 @@
 package com.github.gabrielvelosoo.libraryapi.exceptions;
 
+import lombok.Getter;
+
+@Getter
 public class InvalidFieldException extends RuntimeException {
 
     private final String field;
@@ -7,9 +10,5 @@ public class InvalidFieldException extends RuntimeException {
     public InvalidFieldException(String field, String message) {
         super(message);
         this.field = field;
-    }
-
-    public String getField() {
-        return field;
     }
 }

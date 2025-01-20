@@ -7,6 +7,7 @@ import com.github.gabrielvelosoo.libraryapi.mappers.BookMapper;
 import com.github.gabrielvelosoo.libraryapi.models.Book;
 import com.github.gabrielvelosoo.libraryapi.services.BookService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,15 +16,11 @@ import java.net.URI;
 
 @RestController
 @RequestMapping(value = "/books")
+@RequiredArgsConstructor
 public class BookController implements GenericController {
 
     private final BookService bookService;
     private final BookMapper bookMapper;
-
-    public BookController(BookService bookService, BookMapper bookMapper) {
-        this.bookService = bookService;
-        this.bookMapper = bookMapper;
-    }
 
     @PostMapping
     public ResponseEntity<Void> saveBook(@RequestBody @Valid RegisterBookDTO bookDTO) {

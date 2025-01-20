@@ -2,6 +2,7 @@ package com.github.gabrielvelosoo.libraryapi.models;
 
 import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "tb_user", schema = "public")
 @EntityListeners(AuditingEntityListener.class)
+@Data
 public class User implements Serializable {
 
     @Id
@@ -39,48 +41,4 @@ public class User implements Serializable {
     @LastModifiedDate
     @Column(name = "update_date")
     private LocalDateTime updateDate;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
-                ", roles=" + roles +
-                ", registrationDate=" + registrationDate +
-                ", updateDate=" + updateDate +
-                '}';
-    }
 }

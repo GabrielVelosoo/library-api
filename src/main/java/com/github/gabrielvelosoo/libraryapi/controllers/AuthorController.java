@@ -5,6 +5,7 @@ import com.github.gabrielvelosoo.libraryapi.mappers.AuthorMapper;
 import com.github.gabrielvelosoo.libraryapi.models.Author;
 import com.github.gabrielvelosoo.libraryapi.services.AuthorService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,15 +14,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/authors")
+@RequiredArgsConstructor
 public class AuthorController implements GenericController {
 
     private final AuthorService authorService;
     private final AuthorMapper authorMapper;
-
-    public AuthorController(AuthorService authorService, AuthorMapper authorMapper) {
-        this.authorService = authorService;
-        this.authorMapper = authorMapper;
-    }
 
     @PostMapping
     public ResponseEntity<Void> saveAuthor(@RequestBody @Valid AuthorDTO authorDTO) {
