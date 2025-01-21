@@ -5,8 +5,6 @@ import com.github.gabrielvelosoo.libraryapi.dto.errors.ResponseErrorDTO;
 import com.github.gabrielvelosoo.libraryapi.exceptions.DuplicateRecordException;
 import com.github.gabrielvelosoo.libraryapi.exceptions.InvalidFieldException;
 import com.github.gabrielvelosoo.libraryapi.exceptions.OperationNotAllowedException;
-import com.github.gabrielvelosoo.libraryapi.mappers.FieldErrorMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
@@ -16,18 +14,19 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
-@RequiredArgsConstructor
 public class GlobalExceptionHandler {
-
-    private final FieldErrorMapper fieldErrorMapper;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ResponseErrorDTO handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         List<FieldError> fieldErrors = e.getFieldErrors();
-        List<FieldErrorDTO> errorList = fieldErrorMapper.toDTOs(fieldErrors);
+        List<FieldErrorDTO> errorList = fieldErrors
+                .stream()
+                .map(fe -> new FieldErrorDTO(fe.getField(), fe.getDefaultMessage()))
+                .collect(Collectors.toList());
         return new ResponseErrorDTO(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Validation error.", errorList);
     }
 

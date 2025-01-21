@@ -1,7 +1,5 @@
-package com.github.gabrielvelosoo.libraryapi.config.security;
+package com.github.gabrielvelosoo.libraryapi.security;
 
-import com.github.gabrielvelosoo.libraryapi.security.CustomUserDetailsService;
-import com.github.gabrielvelosoo.libraryapi.services.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -10,7 +8,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,12 +23,14 @@ public class SecurityConfiguration {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
-                .formLogin(configurer -> configurer.loginPage("/login").permitAll())
+//                .formLogin(configurer -> configurer.loginPage("/login").permitAll())
+                .formLogin(Customizer.withDefaults())
                 .authorizeHttpRequests( authorize -> {
                     authorize.requestMatchers("/login/**").permitAll();
                     authorize.requestMatchers(HttpMethod.POST, "/users/**").permitAll();
                     authorize.anyRequest().authenticated();
                 } )
+                .oauth2Login(Customizer.withDefaults())
                 .build();
     }
 
@@ -40,7 +40,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(UserService userService) {
-        return new CustomUserDetailsService(userService);
+    public GrantedAuthorityDefaults grantedAuthorityDefaults() {
+        return new GrantedAuthorityDefaults("");
     }
 }
