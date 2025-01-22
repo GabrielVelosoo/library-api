@@ -19,18 +19,20 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            SocialLoginSuccessHandler successHandler
+    ) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
-//                .formLogin(configurer -> configurer.loginPage("/login").permitAll())
-                .formLogin(Customizer.withDefaults())
+                .formLogin(configurer -> configurer.loginPage("/login").permitAll())
                 .authorizeHttpRequests( authorize -> {
                     authorize.requestMatchers("/login/**").permitAll();
                     authorize.requestMatchers(HttpMethod.POST, "/users/**").permitAll();
                     authorize.anyRequest().authenticated();
                 } )
-                .oauth2Login(Customizer.withDefaults())
+                .oauth2Login(oauth2 -> oauth2.loginPage("/login").successHandler(successHandler))
                 .build();
     }
 

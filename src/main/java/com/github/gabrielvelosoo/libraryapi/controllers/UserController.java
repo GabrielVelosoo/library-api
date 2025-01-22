@@ -4,6 +4,7 @@ import com.github.gabrielvelosoo.libraryapi.dto.UserDTO;
 import com.github.gabrielvelosoo.libraryapi.mappers.UserMapper;
 import com.github.gabrielvelosoo.libraryapi.models.User;
 import com.github.gabrielvelosoo.libraryapi.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +23,7 @@ public class UserController implements GenericController {
     private final UserMapper userMapper;
 
     @PostMapping
-    public ResponseEntity<Void> saveUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<Void> saveUser(@RequestBody @Valid UserDTO userDTO) {
         User user = userMapper.toEntity(userDTO);
         userService.saveUser(user);
         URI url = generateHeaderLocationUser(user.getLogin());

@@ -14,17 +14,13 @@ public record RegisterBookDTO(
         @ISBN(message = "invalid ISNB")
         @NotBlank(message = "required field")
         String isbn,
-
         @NotBlank(message = "required field")
         String title,
-
         @NotNull(message = "required field")
         @Past(message = "cannot be a future date")
         LocalDate postDate,
-
         BookGenre genre,
         BigDecimal price,
-
         @NotNull(message = "required field")
         UUID authorId
     ) {
