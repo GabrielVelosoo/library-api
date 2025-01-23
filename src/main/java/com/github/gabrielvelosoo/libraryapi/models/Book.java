@@ -42,19 +42,19 @@ public class Book implements Serializable {
     @Column(name = "price", precision = 18, scale = 2)
     private BigDecimal price;
 
-    @CreatedDate
-    @Column(name = "registration_date")
-    private LocalDateTime registrationDate;
-
-    @LastModifiedDate
-    @Column(name = "update_date")
-    private LocalDateTime updateDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_author")
+    private Author author;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_author")
-    private Author author;
+    @CreatedDate
+    @Column(name = "registration_date")
+    private LocalDateTime registrationDate;
+
+    @LastModifiedDate
+    @Column(name = "updated_date")
+    private LocalDateTime updatedDate;
 }

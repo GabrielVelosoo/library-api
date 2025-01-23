@@ -1,41 +1,37 @@
 package com.github.gabrielvelosoo.libraryapi.models;
 
-import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tb_user", schema = "public")
+@Table(name = "tb_client")
 @EntityListeners(AuditingEntityListener.class)
 @Data
-public class User implements Serializable {
+public class Client implements Serializable {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "login", length = 20, nullable = false)
-    private String login;
+    @Column(name = "client_id", length = 150, nullable = false)
+    private String clientId;
 
-    @Column(name = "email", length = 150, nullable = false)
-    private String email;
+    @Column(name = "client_secret", length = 400, nullable = false)
+    private String clientSecret;
 
-    @Column(name = "password", length = 300, nullable = false)
-    private String password;
+    @Column(name = "redirect_uri", length = 200, nullable = false)
+    private String redirectURI;
 
-    @Type(ListArrayType.class)
-    @Column(name = "roles", columnDefinition = "varchar[]")
-    private List<String> roles;
+    @Column(name = "scope", length = 50)
+    private String scope;
 
     @CreatedDate
     @Column(name = "registration_date")

@@ -38,15 +38,15 @@ public class Author implements Serializable {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Book> books = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @CreatedDate
     @Column(name = "registration_date")
     private LocalDateTime registrationDate;
 
     @LastModifiedDate
-    @Column(name = "update_date")
-    private LocalDateTime updateDate;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "updated_date")
+    private LocalDateTime updatedDate;
 }

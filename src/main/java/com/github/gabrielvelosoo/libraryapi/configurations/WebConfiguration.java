@@ -1,4 +1,4 @@
-package com.github.gabrielvelosoo.libraryapi.web;
+package com.github.gabrielvelosoo.libraryapi.configurations;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
