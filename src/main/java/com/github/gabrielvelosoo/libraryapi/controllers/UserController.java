@@ -4,6 +4,7 @@ import com.github.gabrielvelosoo.libraryapi.dto.UserDTO;
 import com.github.gabrielvelosoo.libraryapi.mappers.UserMapper;
 import com.github.gabrielvelosoo.libraryapi.models.User;
 import com.github.gabrielvelosoo.libraryapi.services.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.net.URI;
 @RestController
 @RequestMapping(value = "/users")
 @RequiredArgsConstructor
+@Tag(name = "Users")
 public class UserController implements GenericController {
 
     private final UserService userService;

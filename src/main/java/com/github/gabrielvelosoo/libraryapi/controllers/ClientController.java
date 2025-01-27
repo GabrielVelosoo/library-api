@@ -4,6 +4,7 @@ import com.github.gabrielvelosoo.libraryapi.dto.ClientDTO;
 import com.github.gabrielvelosoo.libraryapi.mappers.ClientMapper;
 import com.github.gabrielvelosoo.libraryapi.models.Client;
 import com.github.gabrielvelosoo.libraryapi.services.ClientService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.net.URI;
 @RestController
 @RequestMapping(value = "/clients")
 @RequiredArgsConstructor
+@Tag(name = "Clients")
 public class ClientController implements GenericController {
 
     private final ClientService clientService;

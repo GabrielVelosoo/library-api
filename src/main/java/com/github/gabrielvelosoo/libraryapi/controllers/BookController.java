@@ -6,6 +6,7 @@ import com.github.gabrielvelosoo.libraryapi.enums.BookGenre;
 import com.github.gabrielvelosoo.libraryapi.mappers.BookMapper;
 import com.github.gabrielvelosoo.libraryapi.models.Book;
 import com.github.gabrielvelosoo.libraryapi.services.BookService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import java.net.URI;
 @RestController
 @RequestMapping(value = "/books")
 @RequiredArgsConstructor
+@Tag(name = "Books")
 public class BookController implements GenericController {
 
     private final BookService bookService;
