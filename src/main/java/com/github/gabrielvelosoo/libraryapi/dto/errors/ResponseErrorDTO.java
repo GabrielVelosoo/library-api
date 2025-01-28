@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
+
 public record ResponseErrorDTO(int status, String message, List<FieldErrorDTO> errors) {
 
     public static ResponseErrorDTO defaultResponse(String message) {

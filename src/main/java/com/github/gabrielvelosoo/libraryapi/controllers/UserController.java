@@ -4,6 +4,9 @@ import com.github.gabrielvelosoo.libraryapi.dto.UserDTO;
 import com.github.gabrielvelosoo.libraryapi.mappers.UserMapper;
 import com.github.gabrielvelosoo.libraryapi.models.User;
 import com.github.gabrielvelosoo.libraryapi.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,10 @@ public class UserController implements GenericController {
     private final UserMapper userMapper;
 
     @PostMapping
+    @Operation(summary = "Save", description = "Register new user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Registered with success.")
+    })
     public ResponseEntity<Void> saveUser(@RequestBody @Valid UserDTO userDTO) {
         User user = userMapper.toEntity(userDTO);
         userService.saveUser(user);

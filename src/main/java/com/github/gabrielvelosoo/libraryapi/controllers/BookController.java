@@ -2,11 +2,14 @@ package com.github.gabrielvelosoo.libraryapi.controllers;
 
 import com.github.gabrielvelosoo.libraryapi.dto.RegisterBookDTO;
 import com.github.gabrielvelosoo.libraryapi.dto.ResultSearchBookDTO;
+import com.github.gabrielvelosoo.libraryapi.dto.errors.ResponseErrorDTO;
 import com.github.gabrielvelosoo.libraryapi.enums.BookGenre;
 import com.github.gabrielvelosoo.libraryapi.mappers.BookMapper;
 import com.github.gabrielvelosoo.libraryapi.models.Book;
 import com.github.gabrielvelosoo.libraryapi.services.BookService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,9 +35,26 @@ public class BookController implements GenericController {
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     @Operation(summary = "Save", description = "Register new book")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Registered with success."),
-            @ApiResponse(responseCode = "422", description = "Validation error"),
-            @ApiResponse(responseCode = "409", description = "ISBN already exists")
+            @ApiResponse(responseCode = "201", description = "Registered with success.",
+                    content = @Content(
+                            schema = @Schema(hidden = true)
+                    )
+            ),
+            @ApiResponse(responseCode = "422", description = "Validation error",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ResponseErrorDTO.class, hidden = true)
+                            )
+                    }),
+            @ApiResponse(responseCode = "409", description = "ISBN already exists",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ResponseErrorDTO.class, hidden = true)
+                            )
+                    }),
+            @ApiResponse(responseCode = "401", description = "Unauthorized.", content = @Content)
     })
     public ResponseEntity<Void> saveBook(@RequestBody @Valid RegisterBookDTO bookDTO) {
         Book book = bookMapper.toEntity(bookDTO);
@@ -47,9 +67,20 @@ public class BookController implements GenericController {
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     @Operation(summary = "Update", description = "Updates an existing book")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Successfully update."),
-            @ApiResponse(responseCode = "404", description = "Book not found."),
-            @ApiResponse(responseCode = "409", description = "ISBN already registered.")
+            @ApiResponse(responseCode = "204", description = "Successfully update.",
+                    content = @Content(
+                            schema = @Schema(hidden = true)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Book not found.", content = @Content),
+            @ApiResponse(responseCode = "409", description = "ISBN already registered.",
+                    content = {
+                        @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(implementation = ResponseErrorDTO.class, hidden = true)
+                        )
+                    }),
+            @ApiResponse(responseCode = "401", description = "Unauthorized.", content = @Content)
     })
     public ResponseEntity<Object> updateBook(@PathVariable String id,
                                              @RequestBody @Valid RegisterBookDTO bookDTO) {
@@ -72,8 +103,9 @@ public class BookController implements GenericController {
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     @Operation(summary = "Delete", description = "Deletes an existing book")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Successfully deleted."),
-            @ApiResponse(responseCode = "404", description = "Book not found.")
+            @ApiResponse(responseCode = "204", description = "Successfully deleted.", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Book not found.", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized.", content = @Content)
     })
     public ResponseEntity<Object> deleteBook(@PathVariable String id) {
         return bookService.findBookById(fromString(id))
@@ -87,7 +119,12 @@ public class BookController implements GenericController {
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     @Operation(summary = "Search", description = "Search for books by parameters.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Success.")
+            @ApiResponse(responseCode = "200", description = "Success.",
+                    content = @Content(
+                            schema = @Schema(hidden = true)
+                    )
+            ),
+            @ApiResponse(responseCode = "401", description = "Unauthorized.", content = @Content)
     })
     public ResponseEntity<Page<ResultSearchBookDTO>> searchBooks(
             @RequestParam(value = "isbn", required = false) String isbn,
@@ -107,8 +144,13 @@ public class BookController implements GenericController {
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     @Operation(summary = "Find", description = "Returns book data by ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Book found."),
-            @ApiResponse(responseCode = "404", description = "Book not found.")
+            @ApiResponse(responseCode = "200", description = "Book found",
+                    content = @Content(
+                            schema = @Schema(implementation = ResultSearchBookDTO.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Book not found", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized / Invalid token", content = @Content)
     })
     public ResponseEntity<ResultSearchBookDTO> findBookById(@PathVariable String id) {
         return bookService
