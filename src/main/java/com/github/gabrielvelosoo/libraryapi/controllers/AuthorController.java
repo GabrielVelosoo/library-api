@@ -1,10 +1,13 @@
 package com.github.gabrielvelosoo.libraryapi.controllers;
 
 import com.github.gabrielvelosoo.libraryapi.dto.AuthorDTO;
+import com.github.gabrielvelosoo.libraryapi.dto.errors.ResponseErrorDTO;
 import com.github.gabrielvelosoo.libraryapi.mappers.AuthorMapper;
 import com.github.gabrielvelosoo.libraryapi.models.Author;
 import com.github.gabrielvelosoo.libraryapi.services.AuthorService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +21,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/authors")
+@RequestMapping(value = "/authors", produces = "application/json")
 @RequiredArgsConstructor
 @Tag(name = "Authors")
 public class AuthorController implements GenericController {
@@ -30,9 +33,16 @@ public class AuthorController implements GenericController {
     @PreAuthorize("hasRole('MANAGER')")
     @Operation(summary = "Save", description = "Register new author")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Registered with success."),
-            @ApiResponse(responseCode = "422", description = "Validation error"),
-            @ApiResponse(responseCode = "409", description = "Author already registered")
+            @ApiResponse(responseCode = "201", description = "Registered with success", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized / Invalid token", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Author already registered",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ResponseErrorDTO.class)
+                            )
+                    }
+            )
     })
     public ResponseEntity<Void> saveAuthor(@RequestBody @Valid AuthorDTO authorDTO) {
         Author author = authorMapper.toEntity(authorDTO);
@@ -45,9 +55,17 @@ public class AuthorController implements GenericController {
     @PreAuthorize("hasRole('MANAGER')")
     @Operation(summary = "Update", description = "Updates an existing author")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Successfully update."),
-            @ApiResponse(responseCode = "404", description = "Author not found."),
-            @ApiResponse(responseCode = "409", description = "Author already registered.")
+            @ApiResponse(responseCode = "204", description = "Successfully update"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized / Invalid token", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Author not found", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Author already registered",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ResponseErrorDTO.class)
+                            )
+                    }
+            )
     })
     public ResponseEntity<Object> updateAuthor(@PathVariable String id,
                                                @RequestBody @Valid AuthorDTO authorDTO) {
@@ -66,9 +84,17 @@ public class AuthorController implements GenericController {
     @PreAuthorize("hasRole('MANAGER')")
     @Operation(summary = "Delete", description = "Deletes an existing author")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Successfully deleted."),
-            @ApiResponse(responseCode = "404", description = "Author not found."),
-            @ApiResponse(responseCode = "400", description = "Author has registered book(s).")
+            @ApiResponse(responseCode = "204", description = "Successfully deleted", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Author has registered book(s)",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ResponseErrorDTO.class)
+                            )
+                    }
+            ),
+            @ApiResponse(responseCode = "401", description = "Unauthorized / Invalid token", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Author not found", content = @Content)
     })
     public ResponseEntity<Object> deleteAuthor(@PathVariable String id) {
         return authorService.findAuthorById(fromString(id))
@@ -82,7 +108,8 @@ public class AuthorController implements GenericController {
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     @Operation(summary = "Search", description = "Search for authors by parameters.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Success.")
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized / Invalid token", content = @Content)
     })
     public ResponseEntity<List<AuthorDTO>> searchAuthors(
             @RequestParam(value = "name", required = false) String name,
@@ -97,8 +124,9 @@ public class AuthorController implements GenericController {
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     @Operation(summary = "Find", description = "Returns author data by ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Author found."),
-            @ApiResponse(responseCode = "404", description = "Author not found.")
+            @ApiResponse(responseCode = "200", description = "Author found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized / Invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Author not found", content = @Content)
     })
     public ResponseEntity<AuthorDTO> findAuthorById(@PathVariable String id) {
         return authorService

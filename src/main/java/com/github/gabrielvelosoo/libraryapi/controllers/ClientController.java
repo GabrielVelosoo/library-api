@@ -5,6 +5,7 @@ import com.github.gabrielvelosoo.libraryapi.mappers.ClientMapper;
 import com.github.gabrielvelosoo.libraryapi.models.Client;
 import com.github.gabrielvelosoo.libraryapi.services.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,10 +30,11 @@ public class ClientController implements GenericController {
     private final ClientMapper clientMapper;
 
     @PostMapping
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     @Operation(summary = "Save", description = "Register new client")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Registered with success.")
+            @ApiResponse(responseCode = "201", description = "Registered with success", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized / Invalid token", content = @Content)
     })
     public ResponseEntity<Void> saveClient(@RequestBody @Valid ClientDTO clientDTO) {
         Client client = clientMapper.toEntity(clientDTO);
