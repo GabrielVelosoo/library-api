@@ -5,6 +5,7 @@ import com.github.gabrielvelosoo.libraryapi.dto.errors.ResponseErrorDTO;
 import com.github.gabrielvelosoo.libraryapi.exceptions.DuplicateRecordException;
 import com.github.gabrielvelosoo.libraryapi.exceptions.InvalidFieldException;
 import com.github.gabrielvelosoo.libraryapi.exceptions.OperationNotAllowedException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
@@ -17,11 +18,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ResponseErrorDTO handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error("Validation error: {}", e.getMessage());
         List<FieldError> fieldErrors = e.getFieldErrors();
         List<FieldErrorDTO> errorList = fieldErrors
                 .stream()
@@ -60,6 +63,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseErrorDTO handleUnhandledErrorsException(RuntimeException e) {
+        log.error("Unhandled error", e);
         return new ResponseErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), List.of());
     }
 }
