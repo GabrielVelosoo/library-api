@@ -35,4 +35,8 @@ build/
 ### Ignore application.yml ###
 /src/main/resources/application.yml
 
+### logs ###
 app.log
+
+### env ###
+.env

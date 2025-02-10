@@ -32,7 +32,6 @@ public class ClientController implements GenericController {
     private final ClientMapper clientMapper;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     @Operation(summary = "Save", description = "Register new client")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Registered with success", content = @Content),

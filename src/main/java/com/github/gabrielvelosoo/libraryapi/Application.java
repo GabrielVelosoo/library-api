@@ -14,7 +14,6 @@ public class Application {
 	public static void main(String[] args) {
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(Application.class);
 		builder.bannerMode(Banner.Mode.OFF);
-		builder.profiles("hml");
 		builder.run(args);
 		ConfigurableApplicationContext applicationContext = builder.context();
 		ConfigurableEnvironment environment = applicationContext.getEnvironment();

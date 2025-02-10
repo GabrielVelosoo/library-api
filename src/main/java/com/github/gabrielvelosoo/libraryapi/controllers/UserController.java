@@ -30,7 +30,6 @@ public class UserController implements GenericController {
     private final UserMapper userMapper;
 
     @PostMapping
-    @PreAuthorize("hasRole('MANAGER')")
     @Operation(summary = "Save", description = "Register new user")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Registered with success", content = @Content),

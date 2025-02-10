@@ -34,6 +34,7 @@ public class ResourceServiceConfiguration {
                 .authorizeHttpRequests( authorize -> {
                     authorize.requestMatchers("/login/**").permitAll();
                     authorize.requestMatchers(HttpMethod.POST, "/users/**").permitAll();
+                    authorize.requestMatchers(HttpMethod.POST, "/clients/**").permitAll();
                     authorize.anyRequest().authenticated();
                 } )
                 .oauth2Login(oauth2 -> oauth2.loginPage("/login").successHandler(successHandler))
